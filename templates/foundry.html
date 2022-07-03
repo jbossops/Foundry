@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="generator" content="">
+    <title>Dashboard: Foundry</title>
+    <link rel="canonical" href="">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" >
+
+    <!-- Data Table css -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery.dataTables.css') }}" >
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/buttons.dataTables.min.css') }}" >
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard.css') }}" >
+    
+  </head>
+  <body>
+    
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Foundry manager</a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <!--input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"-->
+  <ul class="navbar-nav px-3">
+    <li class="nav-item text-nowrap">
+      <a class="nav-link active" href="/logout">Sign out</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <div class="sidebar-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="/forming">
+              <span data-feather="arrow-right"></span>
+              Forming list
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/items_completed_forming">
+              &nbsp; 
+              <span data-feather="arrow-right"></span>
+              Items formed 
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/items_canceled_forming">
+              &nbsp; 
+              <span data-feather="arrow-right"></span>
+              Items canceled 
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/foundry">
+              <span data-feather="arrow-right"></span>
+              Foundry
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/items_completed_foundry">
+              &nbsp;
+              <span data-feather="arrow-right"></span>
+              Items completed 
+            </a>
+          </li>
+            <a class="nav-link" href="/items_canceled_foundry">
+              &nbsp;
+              <span data-feather="arrow-right"></span>
+              Items canceled 
+            </a>
+          <li class="nav-item">
+            <a class="nav-link" href="/products">
+              <span data-feather="arrow-right"></span>
+              Products
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Foundry</h1>
+        
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert" style="width: 60%">
+                    {{ msg }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mr-2">
+			        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal_add">Add item</button>
+              &nbsp; 
+
+            <!-- Modal -->
+            <div class="modal fade" id="modal_add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body">
+                    <form action="/add_item_foundry" method="POST">
+                      <div class="form-group">
+                        <label for="a1">Product</label>
+                        <select class="form-control" id="a1" name="a1">
+                        {% for idx in products %}
+                        {% if idx.status != 'disabled' %}
+                          <option value="{{ idx.product_name }}"> {{ idx.product_name }} </option>
+                        {% endif %}
+                        {% endfor %}
+                        </select>
+                     </div>
+
+                    <div class="form-group">
+                      <label for="a2">Quantity</label>
+                      <input type="number" class="form-control" id="a2" name="a2" value="" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="a3">Comment</label>
+                      <textarea class="form-control" id="a3" rows="4" name="a3"></textarea>
+                    </div>
+                    
+
+                    </div>
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Submit</button>
+                        <!--button type="button" class="btn btn-primary">Save changes</button-->
+                      </div>              
+                    </form>
+                  
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!--canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas-->
+
+      <!--h2>Section title</h2-->
+      <div class="table-responsive">
+        <table id="table_id" class="display">
+			<thead>
+				<tr>
+          <th>Product</th>
+					<th>Add date</th>
+          <th>Status</th>
+          <th>Status changed</th>
+          <th>Functions</th>
+				</tr>
+			</thead>
+			<tbody class="dt-center">
+        {% for item in items %}
+        {% if item.status_foundry != 'canceled' %}
+        {% if item.status_foundry != 'knockout' %}
+				<tr>
+          <td>{{ item.product_name }}</td>
+					<td>{{ item.added }}</td>
+          {% if item.status_foundry == 'new' %}
+            <td><span class="badge badge-warning">{{ item.status_foundry }}</span></td>
+          {% elif item.status == 'formed' %}  
+            <td><span class="badge badge-dark">{{ item.status_foundry }}</span></td>
+          {% elif item.status == 'assembled' %}  
+            <td><span class="badge badge-primary">{{ item.status_foundry }}</span></td>
+          {% elif item.status == 'casted' %}  
+            <td><span class="badge badge-danger">{{ item.status_foundry }}</span></td>
+          {% elif item.status == 'knockout' %}  
+            <td><span class="badge badge-success">{{ item.status_foundry }}</span></td>
+          {% elif item.status == 'completed' %}  
+            <td><span class="badge badge-info">{{ item.status_foundry }}</span></td>
+          {% elif item.status == 'canceled' %}  
+            <td><span class="badge badge-secondary">{{ item.status_foundry }}</span></td>
+          {% endif %}
+          <td>{{ item.changed }}</td>
+          <td>
+            <a class="btn btn-secondary btn-sm" tabindex="-1" role="button" data-toggle="modal" data-target="#modal_details{{ item.id }}">Details</a>
+            
+            <!-- Modal -->
+            <div class="modal fade" id="modal_details{{ item.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Item details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <label for="f1">System id</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.id }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Order</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.counter }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Product</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.product_name }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Status</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.status_foundry }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Cooling time</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.cooling_time }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Frames quantity</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.frames_quantity }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Modified</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.changed }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Modified by</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.changed_by }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Added</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.added }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f1">Added by</label>
+                      <input type="text" class="form-control" id="f1" value="{{ item.added_by }}" disabled>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="f2">Comment</label>
+                      <textarea class="form-control" id="f2" rows="4" disabled> {{ item.comment }} </textarea>
+                    </div>
+
+                  </div> 
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <!--button type="button" class="btn btn-primary">Save changes</button-->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <a class="btn btn-secondary btn-sm" tabindex="-1" role="button" data-toggle="modal" data-target="#modal_edit{{ item.id }}">Edit</a>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_edit{{ item.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Edit order</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+            
+                              <div class="modal-body">
+                                <form action="/edit_item/{{ item.id }}" method="POST">                                
+                                  <div class="form-group">
+                                    <label for="a1">Order status: <strong> {{ item.status }}</strong></label>
+                                    <select class="form-control" id="a1" name="a1" value="">
+                                      <option>new</option>
+                                      <option>formed</option>
+                                      <option>canceled</option>
+                                  </select>
+                                  </div>
+
+              
+                                  <div class="form-group">
+                                    <label for="a3">Comment</label>
+                                    <textarea class="form-control" id="a3" rows="4" name="a3">{{ item.comment }}</textarea>
+                                  </div>
+            
+                                </div>
+            
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Submit</button>
+                                    <!--button type="button" class="btn btn-primary">Save changes</button-->
+                                  </div>
+                                
+                                </form>
+                              
+                            </div>
+                          </div>
+                        </div>
+
+
+
+            <a href="#" class="btn btn btn-secondary btn-sm" tabindex="-1" role="button" aria-disabled="true">History</a>
+          </td>
+				</tr>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+			</tbody>
+		</table>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+    <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='js/jquery.dataTables.js') }}"></script>
+    <!--script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='js/dataTables.buttons.min.js') }}"></script>
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='js/pdfmake.min.js') }}"></script>
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='js/jszip.min.js') }}"></script>
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='js/vfs_fonts.js') }}"></script>
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='js/buttons.html5.min.js') }}"></script>
+    <script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='js/buttons.print.min.js') }}"></script-->
+    <script>
+		$(document).ready(function () {
+    $('#table_id').DataTable({
+        order: [[2, 'desc']],
+        "pageLength": 50,
+        });
+    });
+		</script>
+    <script>
+      var time = new Date().getTime();
+      $(document.body).bind("mousemove keypress", function(e) {
+            time = new Date().getTime();
+      });
+      function refresh() {
+          if(new Date().getTime() - time >= 60000) 
+              window.location.reload(true);
+          else 
+              setTimeout(refresh, 10000);
+        }
+      setTimeout(refresh, 10000);
+    </script>
+  </body>
+</html>
