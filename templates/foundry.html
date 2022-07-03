@@ -220,11 +220,6 @@
                     </div>
 
                     <div class="form-group">
-                      <label for="f1">Order</label>
-                      <input type="text" class="form-control" id="f1" value="{{ item.counter }}" disabled>
-                    </div>
-
-                    <div class="form-group">
                       <label for="f1">Product</label>
                       <input type="text" class="form-control" id="f1" value="{{ item.product_name }}" disabled>
                     </div>
@@ -292,12 +287,14 @@
                               </div>
             
                               <div class="modal-body">
-                                <form action="/edit_item/{{ item.id }}" method="POST">                                
+                                <form action="/edit_item_foundry/{{ item.id }}" method="POST">                                
                                   <div class="form-group">
-                                    <label for="a1">Order status: <strong> {{ item.status }}</strong></label>
+                                    <label for="a1">Order status: <strong> {{ item.status_foundry }}</strong></label>
                                     <select class="form-control" id="a1" name="a1" value="">
                                       <option>new</option>
-                                      <option>formed</option>
+                                      <option>assambled</option>
+                                      <option>casted</option>
+                                      <option>knockout</option>
                                       <option>canceled</option>
                                   </select>
                                   </div>

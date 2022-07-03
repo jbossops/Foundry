@@ -172,9 +172,8 @@
         <table id="table_id" class="display">
 			<thead>
 				<tr>
-					<th>Order</th>
-					<th>Add date</th>
           <th>Product</th>
+					<th>Add date</th>
           <th>Status</th>
           <th>Status changed</th>
           <th>Functions</th>
@@ -184,9 +183,8 @@
         {% for item in items %}
         {% if item.status == 'canceled' %}
 				<tr>
-					<td>{{ item.counter }}</td>
-					<td>{{ item.added }}</td>
           <td>{{ item.product_name }}</td>
+					<td>{{ item.added }}</td>
           {% if item.status == 'new' %}
             <td><span class="badge badge-warning">{{ item.status }}</span></td>
           {% elif item.status == 'formed' %}  
@@ -221,11 +219,6 @@
                     <div class="form-group">
                       <label for="f1">System id</label>
                       <input type="text" class="form-control" id="f1" value="{{ item.id }}" disabled>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="f1">Order</label>
-                      <input type="text" class="form-control" id="f1" value="{{ item.counter }}" disabled>
                     </div>
 
                     <div class="form-group">
@@ -296,7 +289,7 @@
                               </div>
             
                               <div class="modal-body">
-                                <form action="/edit_item/{{ item.id }}" method="POST">                                
+                                <form action="/edit_item_forming/{{ item.id }}" method="POST">                                
                                   <div class="form-group">
                                     <label for="a1">Order status: <strong> {{ item.status }}</strong></label>
                                     <select class="form-control" id="a1" name="a1" value="">
@@ -355,7 +348,7 @@
     <script>
 		$(document).ready(function () {
     $('#table_id').DataTable({
-        order: [[2, 'desc']],
+        order: [[1, 'desc']],
         "pageLength": 50,
         });
     });

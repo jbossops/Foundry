@@ -171,7 +171,6 @@
         <table id="table_id" class="display">
 			<thead>
 				<tr>
-					<th style="width: 10%"> id</th>
           <th>Product</th>
           <th>Added by</th>
           <th>Last modification</th>
@@ -182,7 +181,6 @@
         {% for item in items %}
         {% if item.item_status != 'disabled' %}
 				<tr>
-					<td>{{ item.id }}</td>
           <td>{{ item.product_name }}</td>
           <td>{{ item.modified_by }}</td>
           <td>{{ item.modified }}</td>
@@ -347,7 +345,7 @@
 		<script>
 		$(document).ready(function () {
     $('#table_id').DataTable({
-        order: [[3, 'desc']],
+        order: [[0, 'desc']],
         "pageLength": 50,
         });
     });

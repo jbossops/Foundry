@@ -107,7 +107,7 @@
           <div class="btn-group mr-2">
 			        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal_add">Add item</button>
               &nbsp; 
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_add_cascade">Cascade</button>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_add_cascade">Cascade adding</button>
               &nbsp; 
 
             <!-- Modal -->
@@ -310,11 +310,6 @@
                     </div>
 
                     <div class="form-group">
-                      <label for="f1">Order</label>
-                      <input type="text" class="form-control" id="f1" value="{{ item.counter }}" disabled>
-                    </div>
-
-                    <div class="form-group">
                       <label for="f1">Product</label>
                       <input type="text" class="form-control" id="f1" value="{{ item.product_name }}" disabled>
                     </div>
@@ -382,7 +377,7 @@
                               </div>
             
                               <div class="modal-body">
-                                <form action="/edit_item/{{ item.id }}" method="POST">                                
+                                <form action="/edit_item_forming/{{ item.id }}" method="POST">                                
                                   <div class="form-group">
                                     <label for="a1">Order status: <strong> {{ item.status }}</strong></label>
                                     <select class="form-control" id="a1" name="a1" value="">
