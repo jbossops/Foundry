@@ -21,6 +21,7 @@ def main():
     users.append(User(id=1, username='admin', password='password'))  
     users.append(User(id=2, username='office', password='office')) 
     users.append(User(id=3, username='forming', password='forming')) 
+    users.append(User(id=4, username='foundry', password='foundry')) 
 
     def query_db(query):
         cur = mysql.new_cursor(dictionary=True)
@@ -62,7 +63,9 @@ def main():
                     session['user_id'] = user.id
                     session['user'] = user.username
                     if user.username == 'forming':
-                        return redirect(url_for('forming'))
+                        return redirect(url_for('forming_operator'))
+                    elif user.username == 'foundry':
+                        return redirect(url_for('cores_operator'))
                     else:
                         return redirect(url_for('forming'))
                 else:
@@ -88,13 +91,31 @@ def main():
             products = query_db('SELECT * FROM Products ORDER BY product_name DESC')
             return render_template("forming.html", items=query, products=products) 
 
+    @app.route("/forming_operator", methods=['POST', 'GET'])
+    def forming_operator():
+        if not g.user:
+            flash(f'Login required.')
+            return redirect(url_for('login'))
+        else:
+            query = query_db('SELECT Forming.id as id, Forming.status as status, Forming.added_by as added_by, Forming.added as added, Forming.changed as changed, Forming.changed_by as changed_by, Forming.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Forming LEFT JOIN Products ON Forming.product_id = Products.id')
+            return render_template("forming_operator.html", items=query) 
+
+    @app.route("/cores_operator", methods=['POST', 'GET'])
+    def cores_operator():
+        if not g.user:
+            flash(f'Login required.')
+            return redirect(url_for('login'))
+        else:
+            query = query_db('SELECT Foundry.id as id, Foundry.status as status, Foundry.added_by as added_by, Foundry.added as added, Foundry.changed as changed, Foundry.changed_by as changed_by, Foundry.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Foundry LEFT JOIN Products ON Foundry.product_id = Products.id')
+            return render_template("cores_operator.html", items=query) 
+
     @app.route("/foundry", methods=['POST', 'GET'])
     def foundry():
         if not g.user:
             flash(f'Login required.')
             return redirect(url_for('login'))
         else:
-            query = query_db('SELECT Foundry.id as id, Foundry.status_foundry as status_foundry, Foundry.added_by as added_by, Foundry.added as added, Foundry.changed as changed, Foundry.changed_by as changed_by, Foundry.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Foundry LEFT JOIN Products ON Foundry.product_id = Products.id')
+            query = query_db('SELECT Foundry.id as id, Foundry.status as status, Foundry.added_by as added_by, Foundry.added as added, Foundry.changed as changed, Foundry.changed_by as changed_by, Foundry.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Foundry LEFT JOIN Products ON Foundry.product_id = Products.id')
             products = query_db('SELECT * FROM Products ORDER BY product_name DESC')
             return render_template("foundry.html", items=query, products=products) 
 
@@ -104,7 +125,7 @@ def main():
             flash(f'Login required.')
             return redirect(url_for('login'))
         else:
-            query = query_db('SELECT Foundry.id as id, Foundry.status_foundry as status_foundry, Foundry.added_by as added_by, Foundry.added as added, Foundry.changed as changed, Foundry.changed_by as changed_by, Foundry.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Foundry LEFT JOIN Products ON Foundry.product_id = Products.id')
+            query = query_db('SELECT Foundry.id as id, Foundry.status as status, Foundry.added_by as added_by, Foundry.added as added, Foundry.changed as changed, Foundry.changed_by as changed_by, Foundry.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Foundry LEFT JOIN Products ON Foundry.product_id = Products.id')
             return render_template("items_completed_foundry.html", items=query) 
 
     @app.route("/items_canceled_foundry", methods=['POST', 'GET'])
@@ -113,7 +134,7 @@ def main():
             flash(f'Login required.')
             return redirect(url_for('login'))
         else:
-            query = query_db('SELECT Foundry.id as id, Foundry.status_foundry as status_foundry, Foundry.added_by as added_by, Foundry.added as added, Foundry.changed as changed, Foundry.changed_by as changed_by, Foundry.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Foundry LEFT JOIN Products ON Foundry.product_id = Products.id')
+            query = query_db('SELECT Foundry.id as id, Foundry.status as status, Foundry.added_by as added_by, Foundry.added as added, Foundry.changed as changed, Foundry.changed_by as changed_by, Foundry.comment as comment, Products.product_name as product_name, Products.cooling_time as cooling_time, Products.frames_quantity as frames_quantity FROM Foundry LEFT JOIN Products ON Foundry.product_id = Products.id')
             return render_template("items_canceled_foundry.html", items=query) 
 
     @app.route("/items_completed_forming", methods=['POST', 'GET'])
@@ -164,10 +185,10 @@ def main():
             flash(f'Login required.')
             return redirect(url_for('login'))
         else:
-            status_foundry = str(request.form['a1'])
+            status = str(request.form['a1'])
             comment = str(request.form['a3'])
             comment = comment.replace("'", "")
-            query = "UPDATE Foundry SET comment='" + comment + "', status_foundry='" + status_foundry + "', changed_by='" + str(session["user"]) + "', changed=current_timestamp() WHERE id=" + id
+            query = "UPDATE Foundry SET comment='" + comment + "', status='" + status + "', changed_by='" + str(session["user"]) + "', changed=current_timestamp() WHERE id=" + id
             query_update(query)
             return redirect(url_for('foundry'))
 
@@ -270,6 +291,28 @@ def main():
             for items_quantity in range (items_quantity):
                 query_update(query)
             return redirect(url_for('foundry'))  
+
+    @app.route("/mark_as_formed/<id>", methods=['POST'])
+    def mark_as_formed(id):
+        if not g.user:
+            flash(f'Login required.')
+            return redirect(url_for('login'))
+        else:
+            query = "UPDATE Forming SET status='formed', changed_by='" + str(session["user"]) + "', changed=current_timestamp() WHERE id=" + id
+            print(query)
+            query_update(query)
+            return redirect(url_for('forming_operator'))
+
+    @app.route("/mark_as_assembled/<id>", methods=['POST'])
+    def mark_as_assembled(id):
+        if not g.user:
+            flash(f'Login required.')
+            return redirect(url_for('login'))
+        else:
+            query = "UPDATE Foundry SET status='assembled', changed_by='" + str(session["user"]) + "', changed=current_timestamp() WHERE id=" + id
+            print(query)
+            query_update(query)
+            return redirect(url_for('cores_operator'))
 
     if __name__ == "__main__":
         app.run(host="0.0.0.0", port=5555, debug=True)
